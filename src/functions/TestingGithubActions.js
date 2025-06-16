@@ -8,6 +8,6 @@ app.http('TestingGithubActions', {
 
         const name = request.query.get('name') || await request.text() || 'human';
 
-        return { body: `Hi, ${name}!` };
+        return { body: `Hey , ${name}!` };
     }
 });
