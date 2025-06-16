@@ -6,8 +6,15 @@ app.http('TestingGithubActions', {
     handler: async (request, context) => {
         context.log(`Http function processed request for url "${request.url}"`);
 
-        const name = request.query.get('name') || await request.text() || 'being';
+        const {name,age}=request.body;
+        if(!name||!age){
+            return{
+                status:500,
+                body:"Please provide sufficient details"
+            }
+        }
 
-        return { body: `Hey human , ${name}!` };
+
+        return { body: `Hey {name} your age is:${age}` };
     }
 });
