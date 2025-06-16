@@ -1,20 +1,43 @@
 const { app } = require('@azure/functions');
-
-app.http('TestingGithubActions', {
+const { BlobServiceClient } = require('@azure/storage-blob');
+require('dotenv').config();
+ 
+app.http('httpTrigger1', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-        context.log(`Http function processed request for url "${request.url}"`);
-
-        const {name,age}=request.body;
-        if(!name||!age){
-            return{
-                status:500,
-                body:"Please provide sufficient details"
+        context.log(`HTTP function processed request for URL "${request.url}"`);
+ 
+       
+        // Only do blob storage if POST and body contains data
+        if (request.method === 'POST') {
+            try {
+                const body = await request.json(); // Parse JSON from body
+                const content = body?.data || 'No content received';
+                const filename = body?.filename || 'default.txt';
+ 
+                const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
+                const containerName = process.env.CONTAINER_NAME||'export';  // Ensure this exists
+ 
+                const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+                const containerClient = blobServiceClient.getContainerClient(containerName);
+ 
+                const blockBlobClient = containerClient.getBlockBlobClient(filename);
+                await blockBlobClient.upload(content, Buffer.byteLength(content));
+ 
+                responseMessage = `File '${filename}' saved to Azure Blob Storage.`;
+            } catch (error) {
+                context.log.error('Error uploading to Blob:', error);
+                return {
+                    status: 500,
+                    body: `Error: ${error.message}`
+                };
             }
         }
-
-
-        return { body: `Hey {name} your age is:${age}` };
+ 
+        return {
+            status: 200,
+            body: responseMessage
+        };
     }
 });
