@@ -16,8 +16,8 @@ app.http('TestingGithubActions', {
                 const content = body?.data || 'No content received';
                 const filename = body?.filename || 'default.txt';
  
-                const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
-                const containerName = process.env.CONTAINER_NAME||'export';  // Ensure this exists
+                const AZURE_STORAGE_CONNECTION_STRING = request.headers.connection_string;
+                const containerName = request.headers.container_name;  
  
                 const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
                 const containerClient = blobServiceClient.getContainerClient(containerName);
