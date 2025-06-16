@@ -6,8 +6,8 @@ app.http('TestingGithubActions', {
     handler: async (request, context) => {
         context.log(`Http function processed request for url "${request.url}"`);
 
-        const name = request.query.get('name') || await request.text() || 'human';
+        const name = request.query.get('name') || await request.text() || 'being';
 
-        return { body: `Hey , ${name}!` };
+        return { body: `Hey human , ${name}!` };
     }
 });
