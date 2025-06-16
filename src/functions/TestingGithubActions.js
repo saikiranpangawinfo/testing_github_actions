@@ -1,8 +1,8 @@
 const { app } = require('@azure/functions');
 const { BlobServiceClient } = require('@azure/storage-blob');
-require('dotenv').config();
+
  
-app.http('httpTrigger1', {
+app.http('TestingGithubActions', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
